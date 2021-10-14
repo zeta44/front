@@ -15,9 +15,9 @@ export class DepartmentComponent implements OnInit {
 
   depName: string = '';
 
-  departments:Department[] = [];
+  departments: Department[] = [];
 
-  depEdit:Department = null;
+  depEdit: Department = null;
 
   private unsubscribe$: Subject<any> = new Subject();
 
@@ -25,68 +25,73 @@ export class DepartmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.departmentService.get()
-    .pipe(takeUntil(this.unsubscribe$))
-    .subscribe((deps)=> this.departments = deps)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((deps) => this.departments = deps)
   }
 
-  save(){
+  save() {
     if (this.depEdit) {
       this.departmentService.update(
-        {name: this.depName, _id: this.depEdit._id}
+        { name: this.depName, _id: this.depEdit._id }
       ).subscribe(
-        (dep)=>{
+        (dep) => {
           this.notify('UPDATED')
         },
-        (err)=>{
+        (err) => {
           this.notify('ERROR');
           console.error(err)
         }
       )
     }
-    else{
-      this.departmentService.add({name: this.depName})
-      .subscribe(
-        (dep)=>{
-          console.log(dep);
-          this.notify('INSERTED!');
-        },
-        (err)=>{
-          console.error(err);
-        }
-      )
+    else {
+      if (this.depName.length == 0) {
+        this.cancel();
+      }
+      else {
+        this.departmentService.add({ name: this.depName })
+          .subscribe(
+            (dep) => {
+              console.log(dep);
+              this.notify('INSERTED!');
+            },
+            (err) => {
+              console.error(err);
+            }
+          )
+      }
     }
     this.clearFields();
   }
 
-  edit(dep:Department){
+  edit(dep: Department) {
     this.depName = dep.name;
     this.depEdit = dep;
   }
 
-  delete(dep:Department){
+  delete(dep: Department) {
     this.departmentService.del(dep)
-    .subscribe(
-      ()=> this.notify('REMOVED!'),
-      (err)=> this.notify(err.error.msg)
+      .subscribe(
+        () => this.notify('REMOVED!'),
+        (err) => this.notify(err.error.msg)
       )
   }
 
 
 
-  clearFields(){
+  clearFields() {
     this.depName = '';
     this.depEdit = null;
   }
 
-  cancel(){
+  cancel() {
     this.clearFields();
   }
 
-  notify(msg: string){
-    this.snackbar.open(msg, "OK", {duration: 3000})
+  notify(msg: string) {
+    this.snackbar.open(msg, "OK", { duration: 3000 })
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
     this.unsubscribe$.next()
   }
 
