@@ -29,39 +29,71 @@ export class DepartmentComponent implements OnInit {
       .subscribe((deps) => this.departments = deps)
   }
 
+  // save() {
+  //   if (this.depEdit) {
+  //     this.departmentService.update(
+  //       { name: this.depName, _id: this.depEdit._id }
+  //     ).subscribe(
+  //       (dep) => {
+  //         this.notify('UPDATED')
+  //       },
+  //       (err) => {
+  //         this.notify('ERROR');
+  //         console.error(err)
+  //       }
+  //     )
+  //   }
+  //   else {
+  //     if (this.depName.length == 0) {
+  //       this.cancel();
+  //     }
+  //     else {
+  //       this.departmentService.add({ name: this.depName })
+  //         .subscribe(
+  //           (dep) => {
+  //             console.log(dep);
+  //             this.notify('INSERTED!');
+  //           },
+  //           (err) => {
+  //             console.error(err);
+  //           }
+  //         )
+  //     }
+  //   }
+  //   this.clearFields();
+  // }
   save() {
-    if (this.depEdit) {
+    if ( this.depEdit && this.depName.length !== 0) {
       this.departmentService.update(
-        { name: this.depName, _id: this.depEdit._id }
-      ).subscribe(
-        (dep) => {
-          this.notify('UPDATED')
-        },
-        (err) => {
-          this.notify('ERROR');
-          console.error(err)
-        }
-      )
+        {name: this.depName, _id: this.depEdit._id})
+        .subscribe(
+          (dep) => {
+            this.notify('Updated!');
+          },
+          (err) => {
+            this.notify('Error');
+            console.error(err);
+          }
+        )
     }
     else {
       if (this.depName.length == 0) {
         this.cancel();
       }
-      else {
-        this.departmentService.add({ name: this.depName })
-          .subscribe(
-            (dep) => {
-              console.log(dep);
-              this.notify('INSERTED!');
-            },
-            (err) => {
-              console.error(err);
-            }
-          )
+      else{
+      this.departmentService.add({name: this.depName})
+      .subscribe(
+        (dep) => {
+          console.log(dep);
+          
+          this.notify('Inserted!');
+        },
+        (err) => console.error(err))
       }
-    }
     this.clearFields();
+    }
   }
+
 
   edit(dep: Department) {
     this.depName = dep.name;
